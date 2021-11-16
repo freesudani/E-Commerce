@@ -15,6 +15,7 @@ import { Link, useHistory } from "react-router-dom";
 import useStyles from "./styles";
 import AddressForm from "../AddressForm";
 import PaymentForm from "../PaymentForm";
+import { TrendingUpOutlined } from "@material-ui/icons";
 
 const steps = ["Shipping address", "Payment details"];
 
@@ -22,6 +23,7 @@ const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [checkoutToken, setCheckoutToken] = useState(null);
   const [shippingData, setShippingData] = useState({});
+  const [isFinished, setIsFinished] = useState(false);
   const classes = useStyles();
   const history = useHistory();
 
@@ -45,6 +47,12 @@ const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
   const next = (data) => {
     setShippingData(data);
     nextStep();
+  };
+
+  const timeout = () => {
+    setTimeout(() => {
+      setIsFinished(true);
+    }, 3000);
   };
 
   let Confirmation = () =>
@@ -90,6 +98,7 @@ const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
         nextStep={nextStep}
         backStep={backStep}
         onCaptureCheckout={onCaptureCheckout}
+        timeout={timeout}
       />
     );
   return (
@@ -110,6 +119,19 @@ const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
           </Stepper>
           {activeStep === steps.length ? (
             <Confirmation />
+          ) : isFinished ? (
+            <>
+              <div>
+                <Typography variant="h5">
+                  Thank you for your purchase
+                </Typography>
+                <Divider className={classes.divider} />
+              </div>
+              <br />
+              <Button component={Link} to="/" variant="outlined" type="button">
+                Back To Home
+              </Button>
+            </>
           ) : (
             checkoutToken && <Form />
           )}
